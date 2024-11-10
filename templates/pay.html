@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .bill-table {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            border-collapse: collapse;
+        }
+        .bill-table th, .bill-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        .bill-table th {
+            background-color: #f2f2f2;
+        }
+        .pay-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .pay-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Payment Details</h1>
+
+<table class="bill-table">
+    <tr>
+        <th>Item</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+    </tr>
+    <tr>
+        <td>Product A</td>
+        <td>2</td>
+        <td>$10</td>
+        <td>${{ amount }}</td>
+    </tr>
+    <tr>
+        <th colspan="3">Total</th>
+        <th>${{ amount }}</th>
+    </tr>
+</table>
+
+<p><strong>Order ID:</strong> {{ order_id }}</p>
+<p><strong>Customer ID:</strong> {{ customer_id }}</p>
+
+<form action="/payment-success" method="GET">
+    <button class="pay-button" type="submit">Pay Now</button>
+</form>
+
+</body>
+</html>

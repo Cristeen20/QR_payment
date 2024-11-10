@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create NFT Token</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .qr-image {
+            display: block;
+            margin: 0 auto 20px;
+            max-width: 100%;
+            max-height: 200px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .input-field {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .submit-button {
+            padding: 12px 24px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .camera-container {
+            position: relative;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        .capture-button {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Create Your NFT Token</h1>
+
+    <!-- Initial QR Image -->
+    <img id="qrImage" class="qr-image" src="../static/qr.png" alt="QR Code">
+
+    <!-- Video Feed for Camera -->
+    <div class="camera-container" style="display: none;" id="cameraContainer">
+        <video id="video" autoplay></video>
+        <button class="capture-button" id="captureButton">Click Image</button>
+    </div>
+
+    <!-- Canvas to show captured image -->
+    <canvas id="canvas" style="display:none;"></canvas>
+    <img id="capturedImage" class="qr-image" src="" alt="Captured Image" style="display:none;">
+
+    <!-- Form to input event details, amount, and other info -->
+    <form action="/submit-nft" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <input type="text" name="event_details" placeholder="Event Details" class="input-field" required>
+        </div>
+        <div class="form-group">
+            <input type="number" name="amount_spent" placeholder="Amount Spent" class="input-field" required>
+        </div>
+        <div class="form-group">
+            <input type="text" name="nft_title" placeholder="NFT Title" class="input-field" required>
+        </div>
+        <div class="form-group">
+            <textarea name="nft_description" placeholder="NFT Description" class="input-field" rows="4" required></textarea>
+        </div>
+
+        <!-- Hidden input for the captured image -->
+        <input type="hidden" name="nft_image_data" id="nftImageData">
+
+        <!-- Submit Button to Create NFT -->
+        <button type="submit" class="submit-button">Create NFT</button>
+    </form>
+</div>
+
+<script>
+    // Access video stream from webcam
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureButton = document.getElementById('captureButton');
+    const capturedImage = document.getElementById('capturedImage');
+    const nftImageData = document.getElementById('nftImageData');
+    const cameraContainer = document.getElementById('cameraContainer');
+    const qrImage = document.getElementById('qrImage');
+
+    // Initialize video stream
+    async function initCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            cameraContainer.style.display = 'block';  // Show the camera feed once initialized
+        } catch (err) {
+            console.error("Error accessing camera:", err);
+        }
+    }
+
+    // Capture image from video
+    captureButton.addEventListener('click', () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert the canvas to a data URL and display it
+        const imageDataUrl = canvas.toDataURL('image/png');
+        capturedImage.src = imageDataUrl;
+        capturedImage.style.display = 'block';
+        
+        // Replace the QR image with the captured image
+        qrImage.style.display = 'none';  // Hide the QR code
+        nftImageData.value = imageDataUrl;  // Store the image data in the hidden input
+    });
+
+    // Start the camera on page load
+    initCamera();
+</script>
+
+</body>
+</html>
